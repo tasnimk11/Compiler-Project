@@ -1,23 +1,23 @@
 #include "sym_tab.h"
 #include <stdio.h>
 
-int main() {
-    //print empty tab
+int test_sym() {
+    //print_sym_tab empty tab
     printf("\n-------TEST EMPTY TABLE--------\n");
-    print();
+    print_sym_tab();
 
 
    
     printf("\n-------TEST PUSH --------------\n");
 
-    push("e1", "int", 0, 100, 100); // add elem
-    print(); // print tab
+    push("e1", "int", 0); // add elem
+    print_sym_tab(); // print_sym_tab tab
 
-    push("e2", "int", 0, 200, 200); // add elem
-    print(); // print tab
+    push("e2", "int", 0); // add elem
+    print_sym_tab(); // print_sym_tab tab
 
-    push("e3", "int", 0, 300, 300); // add elem
-    print(); // print tab
+    push("e3", "int", 0); // add elem
+    print_sym_tab(); // print_sym_tab tab
 
 
 
@@ -31,11 +31,11 @@ int main() {
     printf("\n-------TEST POP  --------------\n");
 
     pop();
-    print(); // print tab
+    print_sym_tab(); // print_sym_tab tab
     pop();
-    print(); // print ta
+    print_sym_tab(); // print_sym_tab ta
     pop();
-    print(); // print ta
+    print_sym_tab(); // print_sym_tab ta
 
     
    

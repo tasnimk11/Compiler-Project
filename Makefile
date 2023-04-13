@@ -1,25 +1,58 @@
-PARS=parser.y
-LEX =lex.l
-BIN =main
+# Compiler
+CC = gcc
+BISON = bison
+FLEX = flex
+
+# Compilation Flags
+CFLAGS = -Wall -g -Iinclude
+
+# Directories
+INCDIR = include
+SRCDIR = src
+TESTDIR = test
+OBJDIR = obj
+
+# Source Files
+SRCS = $(wildcard $(SRCDIR)/*.c)
+OBJS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+TESTSRCS = $(wildcard $(TESTDIR)/*.c)
+TESTOBJS = $(patsubst $(TESTDIR)/%.c,$(OBJDIR)/%.o,$(TESTSRCS))
+
+# Main Target
+all: main
+
+# Compile Source Files
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Compile Test Files
+$(OBJDIR)/%.o: $(TESTDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Build main Executable
+main: $(OBJS) $(TESTOBJS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o
+	$(CC) $(CFLAGS) $(OBJS) $(TESTOBJS) -o $@
+
+# Build parser Executable (only symbols table so far)
+parse: $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/sym_tab.o
+	$(CC) $(CFLAGS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/sym_tab.o -o $@
 
 
-CFLAGS=-Wall -g
+$(OBJDIR)/y.tab.c: $(SRCDIR)/parser.y
+	$(BISON) -t -v -d $< -o $(OBJDIR)/y.tab.c
 
-OBJ= sym_tab.o test_sym_tab.o
+$(OBJDIR)/lex.yy.c: $(SRCDIR)/lex.l
+	$(FLEX) -o $(OBJDIR)/lex.yy.c $<
 
-all:$(BIN)
+# Create Object Directory
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-%.o :%.c
-	gcc -c $(CFLAGS) $(CPPFLAGS) $< -o $@
-
-y.tab.c: $(PARS)
-	bison -t -v -Wcounterexample -d $<
-
-lex.yy.c: $(LEX)
-	flex $<
-
-$(BIN): $(OBJ)
-	gcc $(CFLAGS) $(CPPFLAGS) $^ -o $@
-
+# Clean
 clean:
-	del $(OBJ) parser.tab.c lex.yy.c parser.tab.h parser.output lex.exe main.exe
+	del $(OBJDIR) main 
+
+# Test Function
+test:
+	main
+
