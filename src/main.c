@@ -3,6 +3,6 @@
 
 int main() {
     //run tests
-    test_sym();
+    //test_sym();
     return 0;
 }

@@ -34,8 +34,8 @@ main: $(OBJS) $(TESTOBJS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o
 	$(CC) $(CFLAGS) $(OBJS) $(TESTOBJS) -o $@
 
 # Build parser Executable (only symbols table so far)
-parse: $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/sym_tab.o
-	$(CC) $(CFLAGS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/sym_tab.o -o $@
+parse: $(OBJS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o
+	$(CC) $(CFLAGS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/sym_tab.o  $(OBJDIR)/arith_exp.o -o $@
 
 
 $(OBJDIR)/y.tab.c: $(SRCDIR)/parser.y
@@ -50,7 +50,7 @@ $(OBJDIR):
 
 # Clean
 clean:
-	del $(OBJDIR) main 
+	del $(OBJDIR) *.exe
 
 # Test Function
 test:

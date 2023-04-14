@@ -31,11 +31,11 @@ static elem stack_st[SIZE]; // Symbols Table : Stack -> Fixed-size list
 
 /**
  *
- * PUSH function
+ * PUSH function, returns the address of the pushed var(offset)
  *
  */
 
-void push(char * name, char * type, int isInit){
+int push(char * name, char * type, int isInit){
     //Verify if element hasn't been added before
     for(int i=0; i<=nb_elem; i++){
         if(strcmp(name, stack_st[i].name) == 0){
@@ -51,16 +51,18 @@ void push(char * name, char * type, int isInit){
     stack_st[nb_elem].isInit = isInit;
     stack_st[nb_elem].offset = offset;
     stack_st[nb_elem].scope = scope;
+
+    return offset; //return address
 }
 
 
 /**
  *
- * PUSH_PARAM function : considers the fuction param declaration
+ * PUSH_PARAM function : considers the function param declaration, returns the address of the pushed var(offset)
  *
  */
 
-void push_param(char * name, char * type, int isInit){
+int push_param(char * name, char * type, int isInit){
     //Verify if element hasn't been added before
     for(int i=0; i<=nb_elem; i++){
         if(strcmp(name, stack_st[i].name) == 0){
@@ -76,6 +78,8 @@ void push_param(char * name, char * type, int isInit){
     stack_st[nb_elem].isInit = isInit;
     stack_st[nb_elem].offset = offset;
     stack_st[nb_elem].scope = scope+1;
+
+    return offset; //return address
 }
 
 
@@ -105,7 +109,7 @@ void print_sym_tab(){
         printf("Symbols Table is empty.\n");
     } else {
         for (int i=0; i<=nb_elem; i++){
-            printf("%8s | %5s | %1d | %3d | %3d .\n",
+            printf("%8s | %4s | %4d | %4d | %4d .\n",
                    stack_st[i].name,
                    stack_st[i].type,
                    stack_st[i].isInit,
@@ -123,12 +127,15 @@ void print_sym_tab(){
  *      return offset of the elements, -1 if elemnt not in table
  */
 
-int get_offset(char * name){
+int get_addr(char * name){
     for (int i = 0; i <= nb_elem; i++){
-        if (stack_st[i].name == name) {
+        if (strcmp(name, stack_st[i].name) == 0) {
             return stack_st[i].offset;
         }
     }
+
+    printf("None Existing Symbol.\n");
+
     return -1; 
 }
 

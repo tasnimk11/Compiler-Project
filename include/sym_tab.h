@@ -8,15 +8,15 @@
 
 
 
-void push(char * name, char * type, int isInit);
+int push(char * name, char * type, int isInit);
 
-void push_param(char * name, char * type, int isInit);
+int push_param(char * name, char * type, int isInit);
 
 void pop();
 
 void print_sym_tab();
 
-int get_offset(char *elem_name);
+int get_addr(char *elem_name);
 
 void increment_scope();
 

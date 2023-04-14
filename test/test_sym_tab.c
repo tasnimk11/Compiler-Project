@@ -23,9 +23,9 @@ int test_sym() {
 
     printf("\n-------TEST GET OFFSET --------\n");
 
-    printf("    Offset e1 : %d\n", get_offset("e1"));
-    printf("    Offset e2 : %d\n", get_offset("e2"));
-    printf("    Offset e3 : %d\n", get_offset("e3"));
+    printf("    Offset e1 : %d\n", get_addr("e1"));
+    printf("    Offset e2 : %d\n", get_addr("e2"));
+    printf("    Offset e3 : %d\n", get_addr("e3"));
 
 
     printf("\n-------TEST POP  --------------\n");
