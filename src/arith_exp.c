@@ -5,9 +5,9 @@
  */
 
 
-void add_operation(enum opcode_t opecode, int ret, int operand1, int operand2){
+void add_operation(enum opcode_t opcode, int ret, int operand1, int operand2){
 
-    switch(opecode){
+    switch(opcode){
         case(AND):
             printf("AND %d %d %d\n",ret, operand1, operand2);
             break;
@@ -51,7 +51,7 @@ void add_operation(enum opcode_t opecode, int ret, int operand1, int operand2){
             printf("MOV %4d %4d \n",ret, operand1);
             break;
         default :
-            printf("default");
+            printf("OPcode not recognized.");
             break;
     }
 
