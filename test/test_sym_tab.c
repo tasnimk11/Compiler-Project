@@ -10,13 +10,13 @@ int test_sym() {
    
     printf("\n-------TEST PUSH --------------\n");
 
-    push("e1", "int", 0); // add elem
+    push("e1", "int", 0); // add s_elem
     print_sym_tab(); // print_sym_tab tab
 
-    push("e2", "int", 0); // add elem
+    push("e2", "int", 0); // add s_elem
     print_sym_tab(); // print_sym_tab tab
 
-    push("e3", "int", 0); // add elem
+    push("e3", "int", 0); // add s_elem
     print_sym_tab(); // print_sym_tab tab
 
 

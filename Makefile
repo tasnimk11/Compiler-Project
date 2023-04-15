@@ -50,7 +50,7 @@ $(OBJDIR):
 
 # Clean
 clean:
-	del $(OBJDIR) *.exe
+	del $(OBJDIR) *.exe myASM.txt
 
 # Test Function
 test:

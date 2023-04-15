@@ -1,38 +1,72 @@
 #include "sym_tab.h"
 
-#define      SIZE 65536 // in bytes
+/***********************/
+/***********************/
+/*   Macro definition  */
+/***********************/
+/***********************/
 
-#define  INT_SIZE 1     // in bytes
-#define   ID_SIZE 16    // in bytes
-#define TYPE_SIZE 3     // in bytes
+#define SIZE_SYM_TAB 65536 // SIZE of the Symbols Table
+
+#define INT_SIZE 1         // SIZE of the INT type
+
+#define ID_SIZE 16         // SIZE of the string withholding the ID of the symbol
+
+#define TYPE_SIZE 3        // SIZE of the string withholding the TYPE of the symbol
+
+/******************/
+/******************/
+/* Data structure */
+/******************/
+/******************/
 
 /**
- * Structures declarations
+ * @brief Structure of one Operation Element of the Assembler Instruction table
+ */
+struct s_elem {
+    char name[ID_SIZE];    // NAME of the element
+    char type[TYPE_SIZE];  // TYPE of the element
+    int  isInit;           // 1 if the element has already been initialized, 0 otherwise
+    int  offset;           // OFFSET of the element (the Address, for this compiler)
+    int  scope;            // SCOPE of the element (compared to the other functions)
+} typedef s_elem;
+
+
+/******************/
+/******************/
+/* Global variable*/
+/******************/
+/******************/
+
+/**
+ * @brief Symbols Table
+ *
+ * @note It is a fixed-size Stack, nb_list is used as stack pointer
  */
 
-/**
- * One element of the symbols table.
- */
-struct elem
-{
-    char name[ID_SIZE]; // name of the elemet
-    char type[TYPE_SIZE];  // type of the element
-    int  isInit;      // true if the element has already been initialized
-    int  offset;    // offset of the element compared to the bs of the execution stack
-    int  scope;     // scope of the element (compared to the other functions)
-} typedef elem;
+static s_elem stack_st[SIZE_SYM_TAB]; // Symbols Table : Stack -> Fixed-size list
 
+int nb_elem = -1;                     // number of elements of the Symbols Table
 
-int nb_elem = -1; // nb_elem of the Symbols table
-int scope   = -1; // increments with each block
-int offset  = 0 ; // Increments according to size of INT (1 BYTE)
+int scope   = -1;                     // the scope of the element in the program
 
-static elem stack_st[SIZE]; // Symbols Table : Stack -> Fixed-size list
+int offset  = 0 ;                     // the offset of the element in the Symbols Table = The address
+
+/***********************/
+/***********************/
+/* Function definition */
+/***********************/
+/***********************/
 
 /**
+ * @brief Pushes variables declarations to the Symbols Table.
  *
- * PUSH function, returns the address of the pushed var(offset)
+ * @param name The name of the variable
+ * @param type The type of the variable (int)
+ * @param isInit 1 if it has been initialized, 0 otherwise
+ * @return The address of the pushed element
  *
+ * @note the name of a temporary variable is set to : TMP
  */
 
 int push(char * name, char * type, int isInit){
@@ -57,9 +91,14 @@ int push(char * name, char * type, int isInit){
 
 
 /**
+ * @brief Pushes parameters declarations to the Symbols Table.
  *
- * PUSH_PARAM function : considers the function param declaration, returns the address of the pushed var(offset)
+ * @param name The name of the variable
+ * @param type The type of the variable (int)
+ * @param isInit 1 if it has been initialized, 0 otherwise
+ * @return The address of the pushed element
  *
+ * @note it differs for not incrementing the scope, if a parameter is declraed
  */
 
 int push_param(char * name, char * type, int isInit){
@@ -84,10 +123,11 @@ int push_param(char * name, char * type, int isInit){
 
 
 /**
+ * @brief Pops elements of the Symbols Table.
  *
- * POP function
- *
+ * @return Nothing
  */
+
 void pop(){
     if (nb_elem>-1){
         nb_elem--; // decrement nb_elem
@@ -97,11 +137,12 @@ void pop(){
     }
 }
 
-
 /**
+ * @brief Prints the Symbols Table
  *
- * PRINT stack function
+ * This function is used to print the symbols table
  *
+ * @return Nothing
  */
 
 void print_sym_tab(){
@@ -122,9 +163,14 @@ void print_sym_tab(){
 
 
 /**
- * 
- * GET_OFFSET function
- *      return offset of the elements, -1 if elemnt not in table
+ * @brief Get the address of the element from the Symbols Table
+ *
+ * This function is used to print the symbols table
+ *
+ * @param elem_name This is the name of the element (variable, TMP, parameter) we are looking for
+ * @return Address of the element
+ *
+ * @note In this compiler, the address is equal to the offset in the table
  */
 
 int get_addr(char * name){
@@ -140,20 +186,26 @@ int get_addr(char * name){
 }
 
 /**
+ * @brief Increments the scope of the elements of the Symbols Table
  *
- * INCREMENT_SCOPE function
+ * This function is used by the parser to increment the scope whenever it enters a new block.
  *
+ * @return Nothing
  */
+
 void increment_scope(){
     scope++;
 }
 
 
 /**
+ * @brief Decrements the scope of the elements of the Symbols Table
  *
- * DECREMENT_SCOPE function
+ * This function is used by the parser to decrement the scope whenever it quits a block.
  *
+ * @return Nothing
  */
+
 void decrement_scope(){
 
     //pop all those of current scope
