@@ -39,7 +39,7 @@ parse: $(OBJS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o
 
 
 $(OBJDIR)/y.tab.c: $(SRCDIR)/parser.y
-	$(BISON) -t -v -d $< -o $(OBJDIR)/y.tab.c
+	$(BISON) -t -v -d -Wcounterexamples $< -o $(OBJDIR)/y.tab.c
 
 $(OBJDIR)/lex.yy.c: $(SRCDIR)/lex.l
 	$(FLEX) -o $(OBJDIR)/lex.yy.c $<
