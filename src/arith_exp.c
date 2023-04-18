@@ -183,7 +183,7 @@ void print_asm_table(){
 void generate_binary(){
     FILE * output = fopen("myASM.txt","w"); //open output file
     //printf("    OPEN FILE\n");
-    for (int i = 0; i < nb_ins; i++){
+    for (int i = 0; i <= nb_ins; i++){
         char * line = get_asm_str(asm_ins_table[i]);
         fputs(line, output);
         free(line);
