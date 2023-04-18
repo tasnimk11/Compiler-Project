@@ -37,10 +37,11 @@ main: $(OBJS) $(TESTOBJS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o
 parse: $(OBJS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o
 	$(CC) $(CFLAGS) $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/sym_tab.o  $(OBJDIR)/arith_exp.o -o $@
 
-
+# Generate the parser
 $(OBJDIR)/y.tab.c: $(SRCDIR)/parser.y
 	$(BISON) -t -v -d -Wcounterexamples $< -o $(OBJDIR)/y.tab.c
 
+# Generate the lexer
 $(OBJDIR)/lex.yy.c: $(SRCDIR)/lex.l
 	$(FLEX) -o $(OBJDIR)/lex.yy.c $<
 
@@ -56,6 +57,6 @@ clean:
 test:
 	main
 
-# Launch Parser
+# Launch Parser with the input c code
 launch:
 	.\parse.exe < input.txt

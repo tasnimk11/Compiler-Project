@@ -121,7 +121,7 @@ while  : tWHILE tLPAR exp tRPAR {
 
 				  }
 	 body_void               {     //END of the WHILE Body
-					patch(nb_line,get_ins_number()+1); //patches JMF to go to JMP
+					patch(nb_line,get_ins_number()+2); //patches JMF to go to JMP
 					int nb_ins = add_operation(JMP,-1,-1,-1);// op2 <- -1 until patch
 					nb_line=nb_ins; //The line of the JMP in the ASM file
 				 }
@@ -133,7 +133,7 @@ if : tIF tLPAR exp tRPAR  {
 
 			  }
      body_void 		  {     //END of the FIRST block
-    				patch(nb_line,get_ins_number()+1); //patches JMF to go to JMP
+    				patch(nb_line,get_ins_number()+2); //patches JMF to go to JMP
      				int nb_ins = add_operation(JMP,-1,-1,-1);// op2 <- -1 until patch
      				nb_line=nb_ins; //The line of the JMP in the ASM file
 

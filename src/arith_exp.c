@@ -74,11 +74,8 @@ int add_operation(enum opcode_t opcode, int ret, int operand1, int operand2){
         asm_ins_table[nb_ins].operand2 = operand2;
 
     }
-
     return nb_ins;
-
 }
-
 
 /**
  * @brief Gets the assembler instruction from the operation element
@@ -144,9 +141,7 @@ char * get_asm_str(op_elem op){
             break;
 
     }
-
     return str;
-
 }
 
 /**
@@ -167,7 +162,6 @@ void print_asm_table(){
 
         }
     }
-
 }
 
 
@@ -182,15 +176,12 @@ void print_asm_table(){
 
 void generate_binary(){
     FILE * output = fopen("myASM.txt","w"); //open output file
-    //printf("    OPEN FILE\n");
     for (int i = 0; i <= nb_ins; i++){
         char * line = get_asm_str(asm_ins_table[i]);
         fputs(line, output);
         free(line);
     }
-    //printf("    CLOSING FILE\n");
     fclose(output); //close output file
-    //printf("CLOSE FILE\n");
 }
 
 /**
