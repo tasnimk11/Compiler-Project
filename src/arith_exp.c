@@ -206,7 +206,6 @@ void generate_binary(){
 
 void patch(int asm_line,int jump_to_line){
     asm_ins_table[asm_line].operand2 = jump_to_line;
-    printf("    IN PATCH : %s \n ", get_asm_str(asm_ins_table[asm_line]));
 }
 
 

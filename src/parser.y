@@ -134,9 +134,7 @@ if : tIF tLPAR exp tRPAR  {
 
 else :  %empty
 	| tELSE body_void     {
-				     printf("BLOCK 2\n");
 				     //END of the SECOND block
-				     printf("patch( num_ligne = %d , got_to = %d )\n", nb_line, get_ins_number());
 				     patch(nb_line,get_ins_number()); //patches JMP to go out of Body 2
      			      }
         ;
