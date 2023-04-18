@@ -30,7 +30,9 @@ enum opcode_t {
     EQ,  // EQ (equal to) opcode
     NE,  // NE (not equal to) opcode
     NO,  // NO (not) opcode
-    MOV  // MOV (move, copy, assign) opcode
+    MOV, // MOV (move, copy, assign) opcode
+    JMF, // JMF (jump if false) opcode
+    JMP  // JMP (jump) opcode
 };
 
 
@@ -50,10 +52,10 @@ enum opcode_t {
  * @param ret The address where to return the result of the operation
  * @param operand1 The first operand of the operation
  * @param operand2 The second operand of the operation
- * @return Nothing
+ * @return The number of the instruction in the Assembler Instruction table
  */
 
-void add_operation(enum opcode_t opcode, int ret, int operand1, int operand2);
+int add_operation(enum opcode_t opcode, int ret, int operand1, int operand2);
 
 
 /**
@@ -76,5 +78,29 @@ void print_asm_table();
  */
 
 void generate_binary();
+
+/**
+ * @brief Patches the Jump instructions by adding the line to jump to
+ *
+ * This function is used by the parser to give the Jump instructions
+ * the line where to jump to after calculating the size of the block jump from.
+ *
+ *
+ * @param asm_line The asm line holding the JMP or JMF that needs patching
+ * @param jump_to_line The line in the asm to jump to
+ * @return Nothing
+ */
+
+void patch(int asm_line,int jump_to_line);
+
+/**
+ * @brief Gets the current instruction number
+ *
+ * This function is used by the parser to get the current instruction number
+ *
+ * @return The instruction number
+ */
+
+int get_ins_number();
 
 #endif

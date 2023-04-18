@@ -8,7 +8,7 @@
 
 #define  SIZE_INS_TAB 200    // SIZE of the Assembler Instruction Table
 
-#define  SIZE_INS 50         // SIZE of one instruction, in number of characters
+#define  SIZE_INS 200         // SIZE of one instruction, in number of characters
 
 /******************/
 /******************/
@@ -41,7 +41,7 @@ struct op_elem {
 
 static op_elem asm_ins_table[SIZE_INS_TAB];
 
-int nb_ins = 0;        // Number of instructions of the Assembler Instruction table
+int nb_ins = -1;        // Number of instructions of the Assembler Instruction table
 
 /***********************/
 /***********************/
@@ -58,23 +58,24 @@ int nb_ins = 0;        // Number of instructions of the Assembler Instruction ta
  * @param ret The address where to return the result of the operation
  * @param operand1 The first operand of the operation
  * @param operand2 The second operand of the operation
- * @return Nothing
+ * @return The number of the instruction in the Assembler Instruction table
  */
 
-void add_operation(enum opcode_t opcode, int ret, int operand1, int operand2){
+int add_operation(enum opcode_t opcode, int ret, int operand1, int operand2){
     if (nb_ins == SIZE_INS_TAB){ //limit of the Assembler Instruction table
         printf("Instruction Table Full.\n");
     } else {
+        nb_ins++; //increment the number of instructions
+
         //Add Instruction
         asm_ins_table[nb_ins].opcode = opcode;
         asm_ins_table[nb_ins].ret = ret;
         asm_ins_table[nb_ins].operand1 = operand1;
         asm_ins_table[nb_ins].operand2 = operand2;
 
-        nb_ins++; //increment the number of instructions
-
-        print_asm_table();
     }
+
+    return nb_ins;
 
 }
 
@@ -133,6 +134,12 @@ char * get_asm_str(op_elem op){
         case (MOV):
             sprintf(str,"MOV %4d %4d \n", op.ret, op.operand1);
             break;
+        case (JMF):
+            sprintf(str,"JMF %4d %4d \n", op.operand1, op.operand2);
+            break;
+        case (JMP):
+            sprintf(str,"JMP %4d \n", op.operand2);
+            break;
         default:
             break;
 
@@ -186,4 +193,31 @@ void generate_binary(){
     //printf("CLOSE FILE\n");
 }
 
+/**
+ * @brief Patches the Jump instructions by adding the line to jump to
+ *
+ * This function is used by the parser to give the Jump instructions
+ * the line where to jump to after calculating the size of the block jump from.
+ *
+ * @param asm_line The asm line holding the JMP or JMF that needs patching
+ * @param jump_to_line The line in the asm to jump to
+ * @return Nothing
+ */
 
+void patch(int asm_line,int jump_to_line){
+    asm_ins_table[asm_line].operand2 = jump_to_line;
+    printf("    IN PATCH : %s \n ", get_asm_str(asm_ins_table[asm_line]));
+}
+
+
+/**
+ * @brief Gets the current instruction number
+ *
+ * This function is used by the parser to get the current instruction number
+ *
+ * @return The instruction number
+ */
+
+int get_ins_number(){
+    return nb_ins;
+}

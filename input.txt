@@ -1,0 +1,14 @@
+void main(void){
+    int a,b=5;
+    if (b<2){
+        a=0;
+    } else {
+        a=1;
+        if (b==5){
+            a=a-10000;
+        } else {
+            a=a+10000;
+        }
+    }
+
+}

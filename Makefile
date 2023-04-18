@@ -56,3 +56,6 @@ clean:
 test:
 	main
 
+# Launch Parser
+launch:
+	.\parse.exe < input.txt
