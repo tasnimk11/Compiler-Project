@@ -15,13 +15,17 @@
 %union{
     int  numD;
     char name[16];
+    struct {
+    	int condition;
+    	int exit;
+    } while_s;
 }
 
 %token <numD>  tNB
 %token tINT tVOID
 %token <name> tID
 %token tCOMMA tSEMI 
-%token tRETURN tPRINT tWHILE  
+%token tRETURN tPRINT
 %token tNO 
 
 %nonassoc tLPAR tRPAR
@@ -36,8 +40,9 @@
 
 %precedence NOT
 
-%token tIF
-%token tELSE
+%token<numD> tIF
+%token<numD> tELSE
+%token<while_s> tWHILE
 
 %token tASSIGN
 
@@ -115,36 +120,41 @@ in : print tSEMI
 print : tPRINT tLPAR exp tRPAR
 	;
 
-while  : tWHILE tLPAR exp tRPAR {
-					int nb_ins = add_operation(JMF,-1,$3,-1); // op2 <- -1 until patch
-					nb_line=nb_ins; //The line of the JMF in the ASM file
+while  : tWHILE tLPAR   {
+				$1.condition = get_ins_number(); //get where to start evaluating condition
+			}
 
-				  }
-	 body_void               {     //END of the WHILE Body
-					patch(nb_line,get_ins_number()+2); //patches JMF to go to JMP
-					int nb_ins = add_operation(JMP,-1,-1,-1);// op2 <- -1 until patch
-					nb_line=nb_ins; //The line of the JMP in the ASM file
-				 }
+	 exp tRPAR 	{
+				$1.exit = add_operation(JMF,-1,$4,-1); // op2 <- -1 until patch
+
+			 }
+	 body_void       {     //END of the WHILE Body
+				patch($1.exit,get_ins_number()+2); //patches JMF to go to JMP
+				add_operation(JMP,-1,-1,$1.condition+1);// op2 <- re-evaluate condition
+			 }
 	;
 
 if : tIF tLPAR exp tRPAR  {
 				int nb_ins = add_operation(JMF,-1,$3,-1); // op2 <- -1 until patch
-				nb_line=nb_ins; //The line of the JMF in the ASM file
+				$1 = nb_ins;
 
 			  }
      body_void 		  {     //END of the FIRST block
-    				patch(nb_line,get_ins_number()+2); //patches JMF to go to JMP
-     				int nb_ins = add_operation(JMP,-1,-1,-1);// op2 <- -1 until patch
-     				nb_line=nb_ins; //The line of the JMP in the ASM file
-
+    				patch($1,get_ins_number()+2); //patches JMF to go to JMP
+				$1=get_ins_number()+1; //The line of the JMP in the ASM file
 		 	 }
      else
    ;
 
 else :  %empty
-	| tELSE body_void     {
+	| tELSE               {
+					int nb_ins = add_operation(JMP,-1,-1,-1);// op2 <- -1 until patch
+					$1=nb_ins; //The line of the JMP in the ASM file
+
+			      }
+	  body_void           {
 				     //END of the SECOND block
-				     patch(nb_line,get_ins_number()); //patches JMP to go out of Body 2
+				     patch($1,get_ins_number()); //patches JMP to go out of Body 2
      			      }
         ;
 
@@ -183,92 +193,81 @@ args : exp
 
 exp   :  tNB		{
 				int addr = push("TMP","int",0); //temp var + get addr
-				add_operation(MOV,addr,$1,-1);
+				add_operation(MVL,addr,$1,-1); //move value
 				$$=addr;
 				pop();
 
 			}
-       | tID            {	int addr = get_addr($1);
-				$$ = addr;
+       | tID            {	int addr = push("TMP","int",0); //temp var + get addr
+				add_operation(MOV,addr,get_addr($1),-1); //move addr
+				$$=addr;
 			}
        | call           {
 				printf("CALL \n"); //TODO
 			}
        | exp tAND exp  {
-       				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(AND,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+       				add_operation(AND,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tOR exp    {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(OR,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(OR,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
-       | exp tADD exp   {	int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(ADD,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+       | exp tADD exp   {
+				add_operation(ADD,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tSUB exp   {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(SUB,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(SUB,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tMUL exp   {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(MUL,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(MUL,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tDIV exp   {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(DIV,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(DIV,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tLT exp    {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(LT,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(LT,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tLE exp    {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(LE,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(LE,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tGT exp    {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(GT,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(GT,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tGE exp    {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(GE,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(GE,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tEQ exp    {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(EQ,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(EQ,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | exp tNE exp    {
-				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(NE,addr_tmp,$1,$3);
-				$$ = addr_tmp;
+				add_operation(NE,$1,$1,$3);
+				$$ = $1;
 				pop();
 			}
        | tNO exp %prec NOT {
-       				int addr_tmp = push("TMP","int",0); //temp var + get addr_tmp
-				add_operation(NO,addr_tmp,$2,-1);
-				$$ = addr_tmp;
+				add_operation(NO,$2,$2,-1);
+				$$ = $2;
 				pop();
 			    }
        ;

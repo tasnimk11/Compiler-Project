@@ -131,6 +131,9 @@ char * get_asm_str(op_elem op){
         case (MOV):
             sprintf(str,"MOV %4d %4d \n", op.ret, op.operand1);
             break;
+        case (MVL):
+            sprintf(str,"MVL %4d %4d \n", op.ret, op.operand1);
+            break;
         case (JMF):
             sprintf(str,"JMF %4d %4d \n", op.operand1, op.operand2);
             break;

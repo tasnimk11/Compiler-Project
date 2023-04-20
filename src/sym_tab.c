@@ -72,7 +72,7 @@ int offset  = 0 ;                     // the offset of the element in the Symbol
 int push(char * name, char * type, int isInit){
     //Verify if element hasn't been added before
     for(int i=0; i<=nb_elem; i++){
-        if(strcmp(name, stack_st[i].name) == 0){
+        if(strcmp(name, stack_st[i].name) == 0 && strcmp("TMP", stack_st[i].name)){
             printf("Element already defined.\n");
             exit(-1);
         }
@@ -85,6 +85,11 @@ int push(char * name, char * type, int isInit){
     stack_st[nb_elem].isInit = isInit;
     stack_st[nb_elem].offset = offset;
     stack_st[nb_elem].scope = scope;
+
+
+    printf("------------\n");
+    print_sym_tab();
+    printf("------------\n");
 
     return offset; //return address
 }

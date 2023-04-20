@@ -30,7 +30,8 @@ enum opcode_t {
     EQ,  // EQ (equal to) opcode
     NE,  // NE (not equal to) opcode
     NO,  // NO (not) opcode
-    MOV, // MOV (move, copy, assign) opcode
+    MOV, // MOV (copy) opcode
+    MVL, // MOV (assign) value
     JMF, // JMF (jump if false) opcode
     JMP  // JMP (jump) opcode
 };
