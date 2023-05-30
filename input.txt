@@ -1,6 +1,23 @@
 void main(void){
-    int a;
-    while(a==5){
-        a=a+1;
+    int a = 5;
+    int b = 1;
+    int c ;
+    while (a == 1000){
+        c=7777;
+
     }
+
+    if (b<2){
+        c=7777;
+    } else {
+        c=7777;
+    }
+
+    if (b<2){
+        c=7777;
+    }
+
+    c=a*b;
+
+
 }

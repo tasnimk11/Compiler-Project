@@ -121,7 +121,7 @@ print : tPRINT tLPAR exp tRPAR
 	;
 
 while  : tWHILE tLPAR   {
-				$1.condition = get_ins_number(); //get where to start evaluating condition
+				$1.condition = get_ins_number()+1; //get where to start evaluating condition
 			}
 
 	 exp tRPAR 	{
@@ -130,7 +130,7 @@ while  : tWHILE tLPAR   {
 			 }
 	 body_void       {     //END of the WHILE Body
 				patch($1.exit,get_ins_number()+2); //patches JMF to go to JMP
-				add_operation(JMP,-1,-1,$1.condition+1);// op2 <- re-evaluate condition
+				add_operation(JMP,-1,-1,$1.condition);// op2 <- re-evaluate condition
 			 }
 	;
 
@@ -154,7 +154,7 @@ else :  %empty
 			      }
 	  body_void           {
 				     //END of the SECOND block
-				     patch($1,get_ins_number()); //patches JMP to go out of Body 2
+				     patch($1,get_ins_number()+1); //patches JMP to go out of Body 2
      			      }
         ;
 

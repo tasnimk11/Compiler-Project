@@ -6,7 +6,7 @@
 /***********************/
 /***********************/
 
-#define SIZE_SYM_TAB 65536 // SIZE of the Symbols Table
+#define SIZE_SYM_TAB 256 // SIZE of the Symbols Table
 
 #define INT_SIZE 1         // SIZE of the INT type
 
@@ -73,10 +73,16 @@ int push(char * name, char * type, int isInit){
     //Verify if element hasn't been added before
     for(int i=0; i<=nb_elem; i++){
         if(strcmp(name, stack_st[i].name) == 0 && strcmp("TMP", stack_st[i].name)){
-            printf("Element already defined.\n");
+            printf("%s : Variable already defined.\n", &name);
             exit(-1);
         }
     }
+
+    if(nb_elem >= SIZE_SYM_TAB){
+        printf("Too many symbols: limit reached\n");
+        return -1;
+    }
+
 
     nb_elem++; // increment nb_elem
     offset += INT_SIZE; // increment offset
@@ -87,9 +93,10 @@ int push(char * name, char * type, int isInit){
     stack_st[nb_elem].scope = scope;
 
 
-    printf("------------\n");
-    print_sym_tab();
-    printf("------------\n");
+    //printf("------------\n");
+    //print_sym_tab();
+    //printf("nb_elem = %d\n",nb_elem);
+    //printf("------------\n");
 
     return offset; //return address
 }
@@ -110,9 +117,14 @@ int push_param(char * name, char * type, int isInit){
     //Verify if element hasn't been added before
     for(int i=0; i<=nb_elem; i++){
         if(strcmp(name, stack_st[i].name) == 0){
-            printf("Element already defined.\n");
+            printf("%s : parameter already defined.\n", &name);
             exit(-1);
         }
+    }
+
+    if(nb_elem >= SIZE_SYM_TAB){
+        printf("Too many symbols: limit reached\n");
+        return -1;
     }
 
     nb_elem++; // increment nb_elem
@@ -140,6 +152,8 @@ void pop(){
     } else {
         printf("Symbols Table is empty.\n");
     }
+
+    //printf("nb_elem = %d\n",nb_elem);
 }
 
 /**
@@ -185,7 +199,7 @@ int get_addr(char * name){
         }
     }
 
-    printf("None Existing Symbol.\n");
+    printf("%s : None Existing Symbol.\n",&name);
 
     return -1; 
 }
